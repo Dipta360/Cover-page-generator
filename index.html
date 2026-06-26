@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রফেশনাল কভার পেজ জেনারেটর - গর্জিয়াস সংস্করণ</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;500;600;700;800&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- কালপুরুষ ও সোলায়মানলিপি ফন্ট -->
+    <style>
+        @font-face {
+            font-family: 'Kalpurush';
+            src: url('https://fonts.maateen.me/kalpurush/Kalpurush.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'SolaimanLipi';
+            src: url('https://fonts.maateen.me/solaiman-lipi/SolaimanLipi.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --primary-color: #1e3a8a; /* Deep Navy Blue */
+            --secondary-color: #b45309; /* Elegant Amber/Gold */
+            --bg-page-style: #ffffff;
+            --watermark-opacity: 0.05;
+        }
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+        .serif-bengali {
+            font-family: 'Noto Serif Bengali', serif;
+        }
+        .cinzel-font {
+            font-family: 'Cinzel', serif;
+        }
+        .preview-area {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 3rem 2rem;
+            min-height: calc(100vh - 72px);
+            background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
+            overflow-y: auto;
+        }
+        .a4-preview {
+            width: 210mm;
+            height: 297mm;
+            padding: 18mm;
+            background: var(--bg-page-style);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: top center;
+            color: #1e293b;
+            overflow: hidden;
+        }
+        .corner-ornament {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            border-color: var(--primary-color);
+            opacity: 0.85;
+            pointer-events: none;
+            z-index: 20;
+        }
+        .corner-top-left { top: 30px; left: 30px; border-top: 3px solid; border-left: 3px solid; }
+        .corner-top-right { top: 30px; right: 30px; border-top: 3px solid; border-right: 3px solid; }
+        .corner-bottom-left { bottom: 30px; left: 30px; border-bottom: 3px solid; border-left: 3px solid; }
+        .corner-bottom-right { bottom: 30px; right: 30px; border-bottom: 3px solid; border-right: 3px solid; }
+
+        .border-royal-double {
+            border: 6px double var(--primary-color);
+            outline: 16px double var(--primary-color);
+            outline-offset: -24px;
+        }
+        .border-gilded-crest {
+            border: 12px solid var(--primary-color);
+            padding: 8px;
+        }
+        .border-gilded-crest::before {
+            content: '';
+            position: absolute;
+            top: 24px; bottom: 24px; left: 24px; right: 24px;
+            border: 2px solid var(--secondary-color);
+            pointer-events: none;
+        }
+        .border-minimal-modern {
+            border: 2px solid var(--primary-color);
+        }
+
+        .bg-royal-dots {
+            background-image: radial-gradient(var(--primary-color) 0.5px, transparent 0.5px), radial-gradient(var(--primary-color) 0.5px, transparent 0.5px);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px;
+            opacity: 0.03;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .bg-royal-parchment {
+            background-color: #faf6eb;
+            background-image: radial-gradient(#dfd1b3 1px, transparent 0px);
+            background-size: 24px 24px;
+        }
+        .bg-soft-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+        }
+        .page-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(1.6);
+            opacity: var(--watermark-opacity);
+            width: 320px; height: 320px;
+            pointer-events: none;
+            z-index: 0;
+            filter: grayscale(1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .page-watermark img, .page-watermark svg {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            html, body {
+                background: #ffffff !important;
+                color: #1e293b !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                overflow: hidden !important;
+            }
+            /* হেডার ও সাইডবার লুকানো */
+            .no-print {
+                display: none !important;
+            }
+            /* মেইন লেআউট — শুধু প্রিভিউ দেখাবে */
+            #main-layout {
+                display: block !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+	    p#view-student-roll {
+    		margin-bottom: 10px;
+	    }
+	    p#view-student-class {
+    		margin-bottom: 10px;
+	    }
+            .preview-area {
+                display: block !important;
+                background: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                min-height: auto !important;
+                overflow: visible !important;
+                width: 210mm !important;
+                height: 297mm !important;
+            }
+            /* জুম ট্রান্সফর্ম রিসেট */
+            .print-container, #preview-scale-wrapper {
+                display: block !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                transform: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+                position: static !important;
+                box-shadow: none !important;
+            }
+            /* কভার পেজ */
+            .a4-preview {
+                width: 210mm !important;
+                height: 297mm !important;
+                padding: 18mm !important;
+                margin: 0 !important;
+                background-color: #ffffff !important;
+                box-shadow: none !important;
+                transform: none !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
+                page-break-inside: avoid !important;
+                overflow: hidden !important;
+                position: relative !important;
+                color: #1e293b !important;
+            }
+            .a4-preview * {
+                visibility: visible !important;
+            }
+            /* বর্ডার প্রিন্টে দেখানো */
+            .border-royal-double {
+                border: 6px double var(--primary-color) !important;
+                outline: 16px double var(--primary-color) !important;
+                outline-offset: -24px !important;
+            }
+            .border-gilded-crest {
+                border: 12px solid var(--primary-color) !important;
+            }
+            .border-minimal-modern {
+                border: 2px solid var(--primary-color) !important;
+            }
+            .corner-ornament {
+                display: block !important;
+            }
+            svg {
+                overflow: visible !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <header class="bg-slate-900 border-b border-slate-800 text-white p-4 shadow-xl no-print z-50">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <h1 class="text-lg md:text-xl font-bold flex items-center gap-2.5 tracking-wide serif-bengali">
+                <span class="text-3xl animate-pulse">👑</span> অ্যারিস্টোক্রেট কভার পেজ জেনারেটর
+            </h1>
+            <div class="flex flex-wrap items-center gap-3.5">
+                <div class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <span class="text-xs text-slate-400">জুম:</span>
+                    <input type="range" id="zoom-slider" min="40" max="100" value="70" class="w-20 md:w-28 accent-indigo-500 cursor-pointer">
+                    <span id="zoom-val" class="text-xs font-mono font-bold text-indigo-400">70%</span>
+                </div>
+                <button onclick="window.print()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg shadow-amber-500/10 active:scale-95 flex items-center gap-2 text-sm">
+                    <span>🖨️</span> প্রিন্ট / PDF সংরক্ষণ করুন
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-1 flex flex-col lg:flex-row" id="main-layout">
+        <div class="w-full lg:w-[35%] bg-slate-950 border-r border-slate-800 overflow-y-auto no-print" style="max-height: calc(100vh - 72px);">
+            <div class="p-6 space-y-6">
+                
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 space-y-4">
+                    <h3 class="text-xs font-extrabold text-amber-500 uppercase tracking-widest flex items-center gap-2">
+                        <span>🎨</span> থিম ও রাজকীয় ডিজাইন
+                    </h3>
+                    
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-2">ডিজাইন কালার:</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="applyColorTheme('#1e3a8a', '#b45309')" class="group flex flex-col items-center gap-1">
+                                <div class="w-8 h-8 rounded-full bg-blue-900 border border-slate-700 group-hover:scale-105 transition shadow flex items-center justify-center text-white text-[10px]">✓</div>
+                                <span class="text-[9px] text-slate-400 font-medium">রয়্যাল ব্লু</span>
+                            </button>
+                            <button onclick="applyColorTheme('#7f1d1d', '#d97706')" class="group flex flex-col items-center gap-1">
+                                <div class="w-8 h-8 rounded-full bg-red-900 border border-slate-700 group-hover:scale-105 transition shadow"></div>
+                                <span class="text-[9px] text-slate-400 font-medium">মেরুন</span>
+                            </button>
+                            <button onclick="applyColorTheme('#065f46', '#10b981')" class="group flex flex-col items-center gap-1">
+                                <div class="w-8 h-8 rounded-full bg-emerald-900 border border-slate-700 group-hover:scale-105 transition shadow"></div>
+                                <span class="text-[9px] text-slate-400 font-medium">এমারেল্ড</span>
+                            </button>
+                            <button onclick="applyColorTheme('#1e293b', '#64748b')" class="group flex flex-col items-center gap-1">
+                                <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 group-hover:scale-105 transition shadow"></div>
+                                <span class="text-[9px] text-slate-400 font-medium">চারকোল</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-4 pt-2 border-t border-slate-800/80">
+                        <span class="text-xs text-slate-400 font-medium">কাস্টম কালার বাছাই করুন:</span>
+                        <input type="color" id="primary-color-picker" value="#1e3a8a" class="w-10 h-7 rounded cursor-pointer bg-transparent border-0">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-2">আভিজাত্যपूर्ण ফ্রেম স্টাইল:</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="applyBorder('royal-double')" class="border-btn active-btn p-2 border border-slate-800 hover:border-slate-700 bg-slate-950 rounded-lg text-[11px] font-bold text-slate-300 transition">রয়্যাল ডাবল</button>
+                            <button onclick="applyBorder('gilded-crest')" class="border-btn p-2 border border-slate-800 hover:border-slate-700 bg-slate-950 rounded-lg text-[11px] font-bold text-slate-300 transition">গিল্ডেড ক্রেস্ট</button>
+                            <button onclick="applyBorder('minimal-modern')" class="border-btn p-2 border border-slate-800 hover:border-slate-700 bg-slate-950 rounded-lg text-[11px] font-bold text-slate-300 transition">মডার্ন স্লিক</button>
+                            <button onclick="applyBorder('none')" class="border-btn p-2 border border-slate-800 hover:border-slate-700 bg-slate-950 rounded-lg text-[11px] font-bold text-slate-300 transition">বর্ডার ছাড়া</button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
+                        <span class="text-xs text-slate-400">কোণায় ক্লাসিক অলংকার যুক্ত করুন:</span>
+                        <input type="checkbox" id="toggle-corners" checked class="w-4 h-4 text-amber-500 bg-slate-950 border-slate-800 rounded focus:ring-amber-500">
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 space-y-4">
+                    <h3 class="text-xs font-extrabold text-amber-500 uppercase tracking-widest flex items-center gap-2">
+                        <span>🏫</span> কলেজের লোগো ও জলছাপ (Watermark)
+                    </h3>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-2">লোগো মোড:</label>
+                        <select id="logo-mode" class="w-full text-xs p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 focus:ring-amber-500">
+                            <option value="preset">ডিফল্ট টেমপ্লেট লোগো</option>
+                            <option value="custom">আপনার নিজের লোগো আপলোড করুন</option>
+                        </select>
+                    </div>
+
+                    <div id="preset-logo-area">
+                        <label class="block text-xs font-semibold text-slate-400 mb-2">লোগো টেমপ্লেট:</label>
+                        <select id="preset-logo-select" class="w-full text-xs p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 focus:ring-amber-500">
+                            <option value="crest">🛡️ ভিক্টোরিয়ান রয়্যাল ক্রেস্ট</option>
+                            <option value="cap">🎓 গ্র্যাজুয়েশন ক্যাপ</option>
+                            <option value="book">📖 উন্মুক্ত বই ও আলোকবর্তিকা</option>
+                            <option value="globe">🌐 গ্লোবাল একাডেমি সিল</option>
+                        </select>
+                    </div>
+
+                    <div id="custom-logo-area" class="hidden">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">লোগো ছবি আপলোড (PNG/JPG):</label>
+                        <input type="file" id="logo-uploader" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
+                        <p class="text-[9px] text-slate-500 mt-1">স্বচ্ছ (Transparent PNG) লোগো ব্যবহারে সবথেকে আকর্ষণীয় ফল পাওয়া যাবে।</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-2">লোগো প্রদর্শনের অবস্থান:</label>
+                        <select id="logo-position" class="w-full text-xs p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 focus:ring-amber-500">
+                            <option value="both">উভয় পজিশনে (নামের উপরে ও মিডল ক্রেস্ট)</option>
+                            <option value="top">শুধু শিক্ষা প্রতিষ্ঠানের নামের উপরে</option>
+                            <option value="middle">শুধু অ্যাসাইনমেন্টের উপরে (মিডল ক্রেস্ট)</option>
+                            <option value="none">কোথাও দেখাবো না</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-800/80 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-slate-400 font-semibold">ব্যাকগ্রাউন্ড লোগো জলছাপ (Watermark):</span>
+                            <input type="checkbox" id="check-watermark" checked class="w-4 h-4 text-amber-500 bg-slate-950 border-slate-800 rounded">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[10px] font-semibold text-slate-500 mb-1">
+                                <span>জলছাপের স্বচ্ছতা (Opacity):</span>
+                                <span id="opacity-val">5%</span>
+                            </div>
+                            <input type="range" id="watermark-opacity-slider" min="1" max="25" value="5" class="w-full accent-amber-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 space-y-4">
+                    <h3 class="text-xs font-extrabold text-amber-500 uppercase tracking-widest flex items-center gap-2">
+                        <span>🖼️</span> ব্যাকগ্রাউন্ড ধরণ
+                    </h3>
+                    <div>
+                        <select id="bg-selector" class="w-full text-xs p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 focus:ring-amber-500">
+                            <option value="white">সাদা পাতা (ক্লাসিক)</option>
+                            <option value="parchment">ভিন্টেজ রয়েল ক্রাফট (ক্রিম)</option>
+                            <option value="gradient">অ্যারিস্টোক্রেট গ্রেডিয়েন্ট (সফট)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <h3 class="text-xs font-extrabold text-amber-500 uppercase tracking-widest">⚙️ Advanced Layout Controls</h3>
+
+                    <label class="block text-xs text-slate-400">Page Padding</label>
+                    <input type="range" id="global-padding" min="5" max="40" value="18" class="w-full">
+
+                    <label class="block text-xs text-slate-400">College Name Size</label>
+                    <input type="range" id="college-size" min="16" max="60" value="32" class="w-full">
+
+                    <label class="block text-xs text-slate-400">Title Size</label>
+                    <input type="range" id="title-size" min="16" max="60" value="36" class="w-full">
+
+                    <label class="block text-xs text-slate-400">Font Family</label>
+                    <select id="font-family-selector" class="w-full p-2 rounded bg-slate-950 border border-slate-800">
+                        <option value="'Hind Siliguri',sans-serif">Hind Siliguri</option>
+                        <option value="'Noto Serif Bengali',serif">Noto Serif Bengali</option>
+                        <option value="'Kalpurush',sans-serif">কালপুরুষ (Kalpurush)</option>
+                        <option value="'SolaimanLipi',sans-serif">সোলায়মানলিপি (SolaimanLipi)</option>
+                        <option value="serif">Serif</option>
+                        <option value="sans-serif">Sans Serif</option>
+                    </select>
+
+                    <label class="block text-xs text-slate-400">Logo Size</label>
+                    <input type="range" id="logo-size" min="40" max="220" value="96" class="w-full">
+
+                    <label class="block text-xs text-slate-400">Logo X Position</label>
+                    <input type="range" id="logo-x" min="-250" max="250" value="0" class="w-full">
+
+                    <label class="block text-xs text-slate-400">Logo Y Position</label>
+                    <input type="range" id="logo-y" min="-250" max="250" value="0" class="w-full">
+                </div>
+
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 space-y-4">
+                    <h3 class="text-xs font-extrabold text-amber-500 uppercase tracking-widest flex items-center gap-2">
+                        <span>🏷️</span> লেবেল কাস্টমাইজেশন (স্টাইল ও সাইজসহ)
+                    </h3>
+                    
+                    <div class="space-y-4 divide-y divide-slate-800">
+                        <div class="pt-0 space-y-2">
+                            <label class="block text-[11px] font-bold text-slate-300">১. অ্যাসাইনমেন্ট ব্যাজ লেবেল:</label>
+                            <input type="text" id="input-label-badge" class="block w-full rounded bg-slate-950 border border-slate-800 p-2 text-xs text-slate-200" value="অ্যাসাইনমেন্ট বা নির্ধারিত কাজ">
+                            <div class="flex items-center justify-between gap-2 bg-slate-950/60 p-2 rounded border border-slate-900">
+                                <span class="text-[10px] text-slate-400">সাইজ:</span>
+                                <input type="range" id="size-label-badge" min="10" max="24" value="12" class="w-24 accent-amber-500">
+                                <span class="text-[10px] text-slate-400 ml-1">রং:</span>
+                                <input type="color" id="color-label-badge" value="#1e3a8a" class="w-6 h-5 rounded cursor-pointer bg-transparent border-0">
+                            </div>
+                        </div>
+
+                        <div class="pt-3 space-y-2">
+                            <label class="block text-[11px] font-bold text-slate-300">২. বিষয় বা কোর্স লেবেল:</label>
+                            <input type="text" id="input-label-subject" class="block w-full rounded bg-slate-950 border border-slate-800 p-2 text-xs text-slate-200" value="বিষয় বা কোর্স">
+                            <div class="flex items-center justify-between gap-2 bg-slate-950/60 p-2 rounded border border-slate-900">
+                                <span class="text-[10px] text-slate-400">সাইজ:</span>
+                                <input type="range" id="size-label-subject" min="9" max="20" value="10" class="w-24 accent-amber-500">
+                                <span class="text-[10px] text-slate-400 ml-1">রং:</span>
+                                <input type="color" id="color-label-subject" value="#64748b" class="w-6 h-5 rounded cursor-pointer bg-transparent border-0">
+                            </div>
+                        </div>
+
+                        <div class="pt-3 space-y-2">
+                            <label class="block text-[11px] font-bold text-slate-300">৩. তত্ত্বাবধায়ক লেবেল:</label>
+                            <input type="text" id="input-label-teacher" class="block w-full rounded bg-slate-950 border border-slate-800 p-2 text-xs text-slate-200" value="তত্ত্বাবধানে:">
+                            <div class="flex items-center justify-between gap-2 bg-slate-950/60 p-2 rounded border border-slate-900">
+                                <span class="text-[10px] text-slate-400">সাইজ:</span>
+                                <input type="range" id="size-label-teacher" min="10" max="24" value="12" class="w-24 accent-amber-500">
+                                <span class="text-[10px] text-slate-400 ml-1">রং:</span>
+                                <input type="color" id="color-label-teacher" value="#64748b" class="w-6 h-5 rounded cursor-pointer bg-transparent border-0">
+                            </div>
+                        </div>
+
+                        <div class="pt-3 space-y-2">
+                            <label class="block text-[11px] font-bold text-slate-300">৪. উপস্থাপক লেবেল:</label>
+                            <input type="text" id="input-label-student" class="block w-full rounded bg-slate-950 border border-slate-800 p-2 text-xs text-slate-200" value="উপস্থাপনায়:">
+                            <div class="flex items-center justify-between gap-2 bg-slate-950/60 p-2 rounded border border-slate-900">
+                                <span class="text-[10px] text-slate-400">সাইজ:</span>
+                                <input type="range" id="size-label-student" min="10" max="24" value="12" class="w-24 accent-amber-500">
+                                <span class="text-[10px] text-slate-400 ml-1">রং:</span>
+                                <input type="color" id="color-label-student" value="#64748b" class="w-6 h-5 rounded cursor-pointer bg-transparent border-0">
+                            </div>
+                        </div>
+
+                        <div class="pt-3 space-y-2">
+                            <label class="block text-[11px] font-bold text-slate-300">৫. জমা দেওয়ার তারিখ লেবেল:</label>
+                            <input type="text" id="input-label-date" class="block w-full rounded bg-slate-950 border border-slate-800 p-2 text-xs text-slate-200" value="জমা দেওয়ার শেষ তারিখ">
+                            <div class="flex items-center justify-between gap-2 bg-slate-950/60 p-2 rounded border border-slate-900">
+                                <span class="text-[10px] text-slate-400">সাইজ:</span>
+                                <input type="range" id="size-label-date" min="9" max="20" value="9" class="w-24 accent-amber-500">
+                                <span class="text-[10px] text-slate-400 ml-1">রং:</span>
+                                <input type="color" id="color-label-date" value="#94a3b8" class="w-6 h-5 rounded cursor-pointer bg-transparent border-0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 space-y-4">
+                    <h3 class="text-xs font-extrabold text-amber-500 uppercase tracking-widest flex items-center gap-2">
+                        <span>✍️</span> কভার পেজের তথ্যসমূহ
+                    </h3>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400">শিক্ষা প্রতিষ্ঠানের নাম</label>
+                            <input type="text" id="input-college" class="mt-1 block w-full rounded-lg bg-slate-950 border border-slate-800 p-2.5 text-xs text-slate-200 focus:ring-2 focus:ring-amber-500" value="নরসিংদী সরকারি কলেজ, নরসিংদী">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400">প্রতিষ্ঠানের উপ-শিরোনাম (Established/Location)</label>
+                            <input type="text" id="input-established" class="mt-1 block w-full rounded-lg bg-slate-950 border border-slate-800 p-2.5 text-xs text-slate-200 focus:ring-2 focus:ring-amber-500" value="স্থাপিত: ১৯৪৯ | জাতীয় বিশ্ববিদ্যালয় অধিভুক্ত">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400">অ্যাসাইনমেন্টের শিরোনাম</label>
+                            <textarea id="input-title" rows="2" class="mt-1 block w-full rounded-lg bg-slate-950 border border-slate-800 p-2.5 text-xs text-slate-200 focus:ring-2 focus:ring-amber-500">শিক্ষণ, প্রশিক্ষণ ও উন্নয়ন একে অপরের পরিপূরক — একটি বিশ্লেষণাত্মক মূল্যায়ন</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400">বিষয় বা কোর্সের নাম</label>
+                            <input type="text" id="input-subject" class="mt-1 block w-full rounded-lg bg-slate-950 border border-slate-800 p-2.5 text-xs text-slate-200 focus:ring-2 focus:ring-amber-500" value="প্রশিক্ষণ ও উন্নয়ন">
+                        </div>
+
+                        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800/80 space-y-2">
+                            <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider block">👨‍🏫 তত্ত্বাবধায়ক (শিক্ষকের তথ্য)</span>
+                            <input type="text" id="input-teacher-name" class="block w-full rounded-md bg-slate-900 border border-slate-800 p-2 text-xs text-slate-200 focus:ring-1 focus:ring-amber-500" placeholder="শিক্ষকের নাম" value="ড. মো. মনির হোসাইন">
+                            <input type="text" id="input-teacher-title" class="block w-full rounded-md bg-slate-900 border border-slate-800 p-2 text-xs text-slate-200 focus:ring-1 focus:ring-amber-500" placeholder="পদবি ও বিভাগ" value="সহকারী অধ্যাপক, ব্যবস্থাপনা বিভাগ">
+                            
+                            <div class="flex items-center justify-between gap-2 mt-2 pt-1 border-t border-slate-800">
+                                <label class="text-[10px] text-slate-400">টেক্সট সাইজ:</label>
+                                <input type="range" id="teacher-font-size-slider" min="10" max="26" value="16" class="w-24 accent-amber-500">
+                                <label class="text-[10px] text-slate-400 ml-1">রং:</label>
+                                <input type="color" id="teacher-color-picker" value="#1e293b" class="w-6 h-5 rounded cursor-pointer bg-transparent border-0">
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800/80 space-y-2">
+                            <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider block">👤 উপস্থাপক (শিক্ষার্থীর তথ্য)</span>
+                            <input type="text" id="input-student-name" class="block w-full rounded-md bg-slate-900 border border-slate-800 p-2 text-xs text-slate-200 focus:ring-1 focus:ring-amber-500" placeholder="আপনার নাম" value="দীপ্ত দাস">
+                            <input type="text" id="input-student-roll" class="block w-full rounded-md bg-slate-900 border border-slate-800 p-2 text-xs text-slate-200 focus:ring-1 focus:ring-amber-500" placeholder="রোল নম্বর" value="রোল নম্বর: ১২৩৪">
+                            <input type="text" id="input-student-class" class="block w-full rounded-md bg-slate-900 border border-slate-800 p-2 text-xs text-slate-200 focus:ring-1 focus:ring-amber-500" placeholder="শ্রেণি/বর্ষ" value="শ্রেণি: মাস্টার্স ফাইনাল">
+                            <input type="text" id="input-student-dept" class="block w-full rounded-md bg-slate-900 border border-slate-800 p-2 text-xs text-slate-200 focus:ring-1 focus:ring-amber-500" placeholder="বিভাগ/শাখা" value="বিভাগ: ব্যবস্থাপনা">
+                            
+                            <div class="flex items-center justify-between gap-2 mt-2 pt-1 border-t border-slate-800">
+                                <label class="text-[10px] text-slate-400">টেক্সট সাইজ:</label>
+                                <input type="range" id="student-font-size-slider" min="10" max="26" value="16" class="w-24 accent-amber-500">
+                                <label class="text-[10px] text-slate-400 ml-1">রং:</label>
+                                <input type="color" id="student-color-picker" value="#1e293b" class="w-6 h-5 rounded cursor-pointer bg-transparent border-0">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400">জমা দেওয়ার শেষ তারিখ</label>
+                            <input type="text" id="input-date" class="mt-1 block w-full rounded-lg bg-slate-950 border border-slate-800 p-2.5 text-xs text-slate-200 focus:ring-2 focus:ring-amber-500" value="৩০ জুন, ২০২৬">
+                            
+                            <div class="flex items-center justify-between gap-2 mt-2">
+                                <label class="text-[10px] text-slate-400">টেক্সট সাইজ:</label>
+                                <input type="range" id="date-font-size-slider" min="10" max="24" value="14" class="w-24 accent-amber-500">
+                                <label class="text-[10px] text-slate-400 ml-1">রং:</label>
+                                <input type="color" id="date-color-picker" value="#334155" class="w-6 h-5 rounded cursor-pointer bg-transparent border-0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 preview-area">
+            <div id="preview-scale-wrapper" class="print-container">
+                
+                <div id="cover-page" class="a4-preview flex flex-col justify-between border-royal-double transition-all duration-300">
+                    
+                    <div class="corner-ornaments">
+                        <div class="corner-ornament corner-top-left"></div>
+                        <div class="corner-ornament corner-top-right"></div>
+                        <div class="corner-ornament corner-bottom-left"></div>
+                        <div class="corner-ornament corner-bottom-right"></div>
+                    </div>
+
+                    <div id="bg-dots" class="bg-royal-dots"></div>
+
+                    <div id="cover-watermark-container" class="page-watermark">
+                    </div>
+
+                    <div class="text-center mt-4 relative z-10 space-y-2 flex flex-col items-center">
+                        <div id="top-logo-container" class="h-16 w-16 mb-2 hidden items-center justify-center">
+                        </div>
+                        
+                        <h2 id="view-college" class="serif-bengali text-3xl md:text-[32px] font-extrabold tracking-wide leading-snug">নরসিংদী সরকারি কলেজ, নরসিংদী</h2>
+                        <p id="view-established" class="text-xs text-slate-500 tracking-wider font-semibold serif-bengali">স্থাপিত: ১৯৪৯ | জাতীয় বিশ্ববিদ্যালয় অধিভুক্ত</p>
+                        
+                        <div class="flex items-center justify-center gap-3 pt-2">
+                            <div class="w-20 h-[1.5px] bg-gradient-to-r from-transparent to-[var(--primary-color)]"></div>
+                            <span class="text-[var(--primary-color)] text-xs">❈</span>
+                            <div class="w-20 h-[1.5px] bg-gradient-to-l from-transparent to-[var(--primary-color)]"></div>
+                        </div>
+                    </div>
+
+                    <div class="hidden">
+                        <svg id="logo-cap" class="w-full h-full text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A5.905 5.905 0 018 3.443m4 3.785v3.407m0 0a3.978 3.978 0 011.082-.208M12 10.635c-.322 0-.64-.027-.95-.08a3.978 3.978 0 00-1.082-.208m0 0a50.562 50.562 0 012.658-5.326m0 0a50.56 50.56 0 012.658 5.326"></path>
+                        </svg>
+                        <svg id="logo-book" class="w-full h-full text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-16.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-16.25v14.25"></path>
+                        </svg>
+                        <svg id="logo-crest" class="w-full h-full text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                        </svg>
+                        <svg id="logo-globe" class="w-full h-full text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9s2.015-9 4.5-9m0 0a9.003 9.003 0 018.716 2.253M12 3a9.003 9.003 0 00-8.716 2.253M12 3v18m0-18a9.003 9.003 0 010 18"></path>
+                        </svg>
+                        <img id="logo-custom-img" class="w-full h-full object-contain" alt="Custom Uploaded Logo">
+                    </div>
+
+                    <div class="text-center px-4 my-auto relative z-10 space-y-7">
+                        
+                        <div id="middle-logo-container" class="flex justify-center items-center h-24">
+                        </div>
+
+                        <div id="badge-wrapper" class="inline-flex items-center gap-2 bg-[var(--primary-color)]/10 text-[var(--primary-color)] text-xs font-bold px-6 py-2 rounded-full uppercase tracking-wider border border-[var(--primary-color)]/20 shadow-sm">
+                            <span>⚜️</span> <span id="view-label-badge" style="font-size: 12px; color: #1e3a8a;">অ্যাসাইনমেন্ট বা নির্ধারিত কাজ</span>
+                        </div>
+
+                        <div class="py-2">
+                            <h1 id="view-title" class="serif-bengali text-[32px] md:text-4xl font-extrabold text-slate-900 leading-snug tracking-normal px-2">
+                                শিক্ষণ, প্রশিক্ষণ ও উন্নয়ন একে অপরের পরিপূরক — একটি বিশ্লেষণাত্মক মূল্যায়ন
+                            </h1>
+                        </div>
+
+                        <div id="subject-banner-border" class="inline-block bg-[#fafafc] border border-slate-200 px-8 py-3 rounded-xl shadow-sm border-l-4 border-l-[var(--primary-color)]">
+                            <span id="view-label-subject" class="text-[10px] text-slate-500 block font-bold uppercase tracking-widest" style="font-size: 10px; color: #64748b;">বিষয় বা কোর্স</span>
+                            <span id="view-subject" class="serif-bengali font-bold text-slate-800 text-base md:text-lg">প্রশিক্ষণ ও উন্নয়ন</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6 pt-6 border-t border-slate-200/80 mb-2 px-3 relative z-10">
+                        
+                        <div id="panel-teacher" class="bg-slate-50/50 p-5 rounded-2xl border border-slate-200/80 hover:bg-slate-50 transition duration-300">
+                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5 pb-1 border-b border-slate-200 flex items-center gap-1.5">
+                                <span>👨‍🏫</span> <span id="view-label-teacher" style="font-size: 12px; color: #64748b;">তত্ত্বাবধানে:</span>
+                            </h3>
+                            <p id="view-teacher-name" class="serif-bengali font-bold text-slate-800 text-base">ড. মো. মনির হোসাইন</p>
+                            <p id="view-teacher-title" class="text-xs text-slate-600 mt-1 leading-relaxed serif-bengali">সহকারী অধ্যাপক, ব্যবস্থাপনা বিভাগ</p>
+                            <p id="view-teacher-college" class="text-[10px] text-slate-400 mt-2 font-medium serif-bengali uppercase">নরসিংদী সরকারি কলেজ, নরসিংদী</p>
+                        </div>
+
+                        <div id="panel-student" class="bg-slate-50/50 p-5 rounded-2xl border border-slate-200/80 hover:bg-slate-50 transition duration-300">
+                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5 pb-1 border-b border-slate-200 flex items-center gap-1.5">
+                                <span>👤</span> <span id="view-label-student" style="font-size: 12px; color: #64748b;">উপস্থাপনায়:</span>
+                            </h3>
+                            <p id="view-student-name" class="serif-bengali font-bold text-slate-800 text-base">দীপ্ত দাস</p>
+                            <div class="space-y-1 mt-2.5">
+                                <p id="view-student-roll" class="text-xs text-slate-600 font-medium serif-bengali">রোল নম্বর: ০০০০</p>
+                                <p id="view-student-class" class="text-xs text-slate-600 font-medium serif-bengali">শ্রেণি: মাস্টার্স ফাইনাল</p>
+                                <p id="view-student-dept" class="text-xs text-slate-600 font-medium serif-bengali">বিভাগ: ব্যবস্থাপনা</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="panel-date" class="text-center pt-3 border-t border-slate-100 relative z-10 mb-2">
+                        <span id="view-label-date" class="text-[9px] text-slate-400 uppercase tracking-widest block font-bold" style="font-size: 9px; color: #94a3b8;">জমা দেওয়ার শেষ তারিখ</span>
+                        <p id="view-date" class="text-sm font-bold text-slate-700 mt-0.5">৩০ জুন, ২০২৬</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Setup state binders and model views (Including labels)
+        const inputs = {
+            'input-college': 'view-college',
+            'input-established': 'view-established',
+            'input-title': 'view-title',
+            'input-subject': 'view-subject',
+            'input-teacher-name': 'view-teacher-name',
+            'input-teacher-title': 'view-teacher-title',
+            'input-student-name': 'view-student-name',
+            'input-student-roll': 'view-student-roll',
+            'input-student-class': 'view-student-class',
+            'input-student-dept': 'view-student-dept',
+            'input-date': 'view-date',
+            // Labels text bindings
+            'input-label-badge': 'view-label-badge',
+            'input-label-subject': 'view-label-subject',
+            'input-label-teacher': 'view-label-teacher',
+            'input-label-student': 'view-label-student',
+            'input-label-date': 'view-label-date'
+        };
+
+        // Real-time Text Bindings
+        Object.entries(inputs).forEach(([inputId, viewId]) => {
+            const inputEl = document.getElementById(inputId);
+            const viewEl = document.getElementById(viewId);
+            
+            if (inputEl && viewEl) {
+                inputEl.addEventListener('input', (e) => {
+                    viewEl.innerText = e.target.value;
+                    if (inputId === 'input-college') {
+                        document.getElementById('view-teacher-college').innerText = e.target.value;
+                    }
+                });
+            }
+        });
+
+        // Dynamic Custom Label Styling Engine (Size & Color for each label)
+        function bindLabelStyleControls() {
+            const labelsConfig = [
+                { id: 'badge', viewId: 'view-label-badge' },
+                { id: 'subject', viewId: 'view-label-subject' },
+                { id: 'teacher', viewId: 'view-label-teacher' },
+                { id: 'student', viewId: 'view-label-student' },
+                { id: 'date', viewId: 'view-label-date' }
+            ];
+
+            labelsConfig.forEach(cfg => {
+                const sizeSlider = document.getElementById(`size-label-${cfg.id}`);
+                const colorPicker = document.getElementById(`color-label-${cfg.id}`);
+                const targetEl = document.getElementById(cfg.viewId);
+
+                if (sizeSlider && targetEl) {
+                    sizeSlider.addEventListener('input', (e) => {
+                        targetEl.style.fontSize = e.target.value + 'px';
+                    });
+                }
+                if (colorPicker && targetEl) {
+                    colorPicker.addEventListener('input', (e) => {
+                        targetEl.style.color = e.target.value;
+                        // Synchronize badge border if badge primary changes
+                        if (cfg.id === 'badge') {
+                            document.getElementById('badge-wrapper').style.borderColor = e.target.value + '33';
+                            document.getElementById('badge-wrapper').style.color = e.target.value;
+                        }
+                    });
+                }
+            });
+        }
+
+        // Custom Color Theme Engine
+        function applyColorTheme(primaryColor, secondaryColor) {
+            document.documentElement.style.setProperty('--primary-color', primaryColor);
+            document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+            
+            document.getElementById('view-college').style.color = primaryColor;
+            document.getElementById('primary-color-picker').value = primaryColor;
+
+            const buttons = document.querySelectorAll('.group div');
+            buttons.forEach(btn => {
+                btn.innerHTML = '';
+                btn.style.boxShadow = 'none';
+            });
+            if (event && event.target && event.target.className.includes('bg-')) {
+                event.target.innerHTML = '✓';
+                event.target.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.5)';
+            }
+            updateActiveLogos();
+        }
+
+        // Custom Color Picker Interaction
+        document.getElementById('primary-color-picker').addEventListener('input', (e) => {
+            applyColorTheme(e.target.value, '#d97706');
+        });
+
+        // Premium Border Switcher Engine
+        function applyBorder(borderStyle) {
+            const coverPage = document.getElementById('cover-page');
+            coverPage.className = "a4-preview flex flex-col justify-between transition-all duration-300";
+            coverPage.style.border = ''; 
+
+            if (borderStyle === 'royal-double') {
+                coverPage.classList.add('border-royal-double');
+            } else if (borderStyle === 'gilded-crest') {
+                coverPage.classList.add('border-gilded-crest');
+            } else if (borderStyle === 'minimal-modern') {
+                coverPage.classList.add('border-minimal-modern');
+            } else if (borderStyle === 'none') {
+                coverPage.style.border = 'none';
+            }
+
+            const buttons = document.querySelectorAll('.border-btn');
+            buttons.forEach(btn => btn.classList.remove('bg-amber-600', 'text-slate-950', 'border-amber-500'));
+            if (event && event.target) {
+                event.target.classList.add('bg-amber-600', 'text-slate-950', 'border-amber-500');
+            }
+        }
+
+        // Corner Ornament Toggler
+        document.getElementById('toggle-corners').addEventListener('change', (e) => {
+            const ornaments = document.querySelector('.corner-ornaments');
+            ornaments.style.display = e.target.checked ? 'block' : 'none';
+        });
+
+        // Page Background Style Swapper
+        document.getElementById('bg-selector').addEventListener('change', (e) => {
+            const style = e.target.value;
+            const coverPage = document.getElementById('cover-page');
+            
+            if (style === 'white') {
+                document.documentElement.style.setProperty('--bg-page-style', '#ffffff');
+            } else if (style === 'parchment') {
+                document.documentElement.style.setProperty('--bg-page-style', '#faf6eb');
+                coverPage.style.backgroundColor = '#faf6eb';
+            } else if (style === 'gradient') {
+                document.documentElement.style.setProperty('--bg-page-style', 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)');
+            }
+        });
+
+        // Active Logo Router Engine
+        const logoModeSelector = document.getElementById('logo-mode');
+        const presetLogoSelect = document.getElementById('preset-logo-select');
+        const logoPositionSelector = document.getElementById('logo-position');
+        const watermarkToggle = document.getElementById('check-watermark');
+        
+        const topLogoContainer = document.getElementById('top-logo-container');
+        const middleLogoContainer = document.getElementById('middle-logo-container');
+        const watermarkContainer = document.getElementById('cover-watermark-container');
+        const customImgPlaceholder = document.getElementById('logo-custom-img');
+
+        function getActiveLogoNode() {
+            const mode = logoModeSelector.value;
+            if (mode === 'preset') {
+                const presetId = `logo-${presetLogoSelect.value}`;
+                const baseSvg = document.getElementById(presetId);
+                if (baseSvg) {
+                    const cloned = baseSvg.cloneNode(true);
+                    cloned.style.color = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+                    return cloned;
+                }
+            } else if (mode === 'custom') {
+                if (customImgPlaceholder.src && customImgPlaceholder.src !== '') {
+                    const clonedImg = customImgPlaceholder.cloneNode(true);
+                    return clonedImg;
+                }
+            }
+            return null;
+        }
+
+        function updateActiveLogos() {
+            const logoNode = getActiveLogoNode();
+            const position = logoPositionSelector.value;
+
+            topLogoContainer.innerHTML = '';
+            middleLogoContainer.innerHTML = '';
+            watermarkContainer.innerHTML = '';
+
+            if (logoNode) {
+                if (position === 'both') {
+                    topLogoContainer.classList.remove('hidden');
+                    topLogoContainer.classList.add('flex');
+                    topLogoContainer.appendChild(logoNode.cloneNode(true));
+
+                    middleLogoContainer.classList.remove('hidden');
+                    middleLogoContainer.classList.add('flex');
+                    middleLogoContainer.appendChild(logoNode.cloneNode(true));
+                } else if (position === 'top') {
+                    topLogoContainer.classList.remove('hidden');
+                    topLogoContainer.classList.add('flex');
+                    topLogoContainer.appendChild(logoNode.cloneNode(true));
+
+                    middleLogoContainer.classList.add('hidden');
+                    middleLogoContainer.classList.remove('flex');
+                } else if (position === 'middle') {
+                    topLogoContainer.classList.add('hidden');
+                    topLogoContainer.classList.remove('flex');
+
+                    middleLogoContainer.classList.remove('hidden');
+                    middleLogoContainer.classList.add('flex');
+                    middleLogoContainer.appendChild(logoNode.cloneNode(true));
+                } else {
+                    topLogoContainer.classList.add('hidden');
+                    topLogoContainer.classList.remove('flex');
+                    middleLogoContainer.classList.add('hidden');
+                    middleLogoContainer.classList.remove('flex');
+                }
+
+                if (watermarkToggle.checked) {
+                    watermarkContainer.style.display = 'flex';
+                    const watermarkNode = logoNode.cloneNode(true);
+                    watermarkContainer.appendChild(watermarkNode);
+                } else {
+                    watermarkContainer.style.display = 'none';
+                }
+            } else {
+                topLogoContainer.classList.add('hidden');
+                topLogoContainer.classList.remove('flex');
+                middleLogoContainer.classList.add('hidden');
+                middleLogoContainer.classList.remove('flex');
+                watermarkContainer.style.display = 'none';
+            }
+        }
+
+        logoModeSelector.addEventListener('change', (e) => {
+            const presetArea = document.getElementById('preset-logo-area');
+            const customArea = document.getElementById('custom-logo-area');
+            if (e.target.value === 'preset') {
+                presetArea.classList.remove('hidden');
+                customArea.classList.add('hidden');
+            } else {
+                presetArea.classList.add('hidden');
+                customArea.classList.remove('hidden');
+            }
+            updateActiveLogos();
+        });
+
+        presetLogoSelect.addEventListener('change', updateActiveLogos);
+        logoPositionSelector.addEventListener('change', updateActiveLogos);
+        watermarkToggle.addEventListener('change', updateActiveLogos);
+
+        const opacitySlider = document.getElementById('watermark-opacity-slider');
+        const opacityVal = document.getElementById('opacity-val');
+        opacitySlider.addEventListener('input', (e) => {
+            const pct = e.target.value;
+            opacityVal.innerText = `${pct}%`;
+            document.documentElement.style.setProperty('--watermark-opacity', pct / 100);
+        });
+
+        const logoUploader = document.getElementById('logo-uploader');
+        logoUploader.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    customImgPlaceholder.src = evt.target.result;
+                    updateActiveLogos();
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Zoom Interactive Engine
+        const zoomSlider = document.getElementById('zoom-slider');
+        const zoomVal = document.getElementById('zoom-val');
+        const scaleWrapper = document.getElementById('preview-scale-wrapper');
+
+        zoomSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            zoomVal.innerText = `${val}%`;
+            scaleWrapper.style.transform = `scale(${val / 100})`;
+        });
+
+        function bindAdvancedControls(){
+            const cover=document.getElementById('cover-page');
+
+            const gp=document.getElementById('global-padding');
+            if(gp) gp.addEventListener('input',e=>{
+                cover.style.padding=e.target.value+'mm';
+            });
+
+            const cs=document.getElementById('college-size');
+            if(cs) cs.addEventListener('input',e=>{
+                document.getElementById('view-college').style.fontSize=e.target.value+'px';
+            });
+
+            const ts=document.getElementById('title-size');
+            if(ts) ts.addEventListener('input',e=>{
+                document.getElementById('view-title').style.fontSize=e.target.value+'px';
+            });
+
+            const ff=document.getElementById('font-family-selector');
+            if(ff) ff.addEventListener('change',e=>{
+                document.getElementById('view-college').style.fontFamily=e.target.value;
+                document.getElementById('view-title').style.fontFamily=e.target.value;
+                document.getElementById('view-subject').style.fontFamily=e.target.value;
+                document.querySelectorAll('#cover-page p').forEach(x=>x.style.fontFamily=e.target.value);
+            });
+
+            function updateLogoControls(){
+                const size=(document.getElementById('logo-size')||{}).value || 96;
+                const x=(document.getElementById('logo-x')||{}).value || 0;
+                const y=(document.getElementById('logo-y')||{}).value || 0;
+
+                ['top-logo-container','middle-logo-container'].forEach(id=>{
+                    const el=document.getElementById(id);
+                    if(el){
+                        el.style.width=size+'px';
+                        el.style.height=size+'px';
+                        el.style.transform='translate('+x+'px,'+y+'px)';
+                    }
+                });
+            }
+            ['logo-size','logo-x','logo-y'].forEach(id=>{
+                const el=document.getElementById(id);
+                if(el) el.addEventListener('input',updateLogoControls);
+            });
+            updateLogoControls();
+
+            // Bottom Panels Font and Color controls (Data Fields)
+            const teacherSize = document.getElementById('teacher-font-size-slider');
+            const teacherColor = document.getElementById('teacher-color-picker');
+            if (teacherSize && teacherColor) {
+                const updateTeacherPanel = () => {
+                    const sizeVal = teacherSize.value + 'px';
+                    const colorVal = teacherColor.value;
+                    document.getElementById('view-teacher-name').style.fontSize = sizeVal;
+                    document.getElementById('view-teacher-name').style.color = colorVal;
+                    document.getElementById('view-teacher-title').style.fontSize = (teacherSize.value - 4) + 'px';
+                    document.getElementById('view-teacher-title').style.color = colorVal;
+                    document.getElementById('view-teacher-college').style.color = colorVal;
+                };
+                teacherSize.addEventListener('input', updateTeacherPanel);
+                teacherColor.addEventListener('input', updateTeacherPanel);
+            }
+
+            const studentSize = document.getElementById('student-font-size-slider');
+            const studentColor = document.getElementById('student-color-picker');
+            if (studentSize && studentColor) {
+                const updateStudentPanel = () => {
+                    const sizeVal = studentSize.value + 'px';
+                    const colorVal = studentColor.value;
+                    document.getElementById('view-student-name').style.fontSize = sizeVal;
+                    document.getElementById('view-student-name').style.color = colorVal;
+                    document.querySelectorAll('#panel-student div p').forEach(p => {
+                        p.style.fontSize = (studentSize.value - 4) + 'px';
+                        p.style.color = colorVal;
+                    });
+                };
+                studentSize.addEventListener('input', updateStudentPanel);
+                studentColor.addEventListener('input', updateStudentPanel);
+            }
+
+            const dateSize = document.getElementById('date-font-size-slider');
+            const dateColor = document.getElementById('date-color-picker');
+            if (dateSize && dateColor) {
+                const updateDatePanel = () => {
+                    document.getElementById('view-date').style.fontSize = dateSize.value + 'px';
+                    document.getElementById('view-date').style.color = dateColor.value;
+                };
+                dateSize.addEventListener('input', updateDatePanel);
+                dateColor.addEventListener('input', updateDatePanel);
+            }
+        }
+
+        window.onload = function() {
+            bindAdvancedControls();
+            bindLabelStyleControls();
+            scaleWrapper.style.transform = `scale(0.70)`;
+            applyColorTheme('#1e3a8a', '#b45309');
+            updateActiveLogos();
+        };
+    </script>
+
+    <div class="no-print" style="text-align:center;padding:12px;font-weight:bold;color:#94a3b8">
+        Developed By Dipta Das
+    </div>
+</body>
+</html>
